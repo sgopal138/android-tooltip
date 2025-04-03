@@ -1,15 +1,20 @@
 package com.example.tooltipapplication;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -32,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         TextView showTooltipButton = findViewById(R.id.textview);
-        showTooltipButton.setOnClickListener(this::showTooltip);
+        showTooltipButton.setOnClickListener(v-> showTooltip(showTooltipButton, this));
     }
 
 
@@ -80,6 +85,52 @@ public class MainActivity extends AppCompatActivity {
                     window.setAttributes(params);
                 }
             });
+        });
+    }
+
+    public void showTooltip(View anchorView, Context context) {
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View tooltipView = inflater.inflate(R.layout.tooltip_layout, null);
+
+        PopupWindow popupWindow = new PopupWindow(
+                tooltipView,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                true
+        );
+
+        // Measure the tooltip view
+        tooltipView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+
+        // Get the location of the anchor view on the screen
+        int[] location = new int[2];
+        anchorView.getLocationOnScreen(location);
+
+        int xOffset = location[0] + anchorView.getWidth() / 2 - tooltipView.getMeasuredWidth() / 2;
+        int yOffset = location[1] - tooltipView.getMeasuredHeight();
+
+        // Show the popup window
+        popupWindow.showAtLocation(anchorView, Gravity.NO_GRAVITY, xOffset, yOffset);
+
+        // Dim the background
+        View rootView = ((Activity) context).getWindow().getDecorView().getRootView();
+        WindowManager.LayoutParams layoutParams = ((Activity) context).getWindow().getAttributes();
+        layoutParams.alpha = 0.5f; // Reduce brightness
+        ((Activity) context).getWindow().setAttributes(layoutParams);
+
+        // Close button functionality
+        Button closeButton = tooltipView.findViewById(R.id.close_button);
+        closeButton.setOnClickListener(v -> {
+            popupWindow.dismiss();
+            // Restore background brightness when dismissed
+            layoutParams.alpha = 1.0f;
+            ((Activity) context).getWindow().setAttributes(layoutParams);
+        });
+
+        // Restore background brightness when popup is dismissed
+        popupWindow.setOnDismissListener(() -> {
+            layoutParams.alpha = 1.0f;
+            ((Activity) context).getWindow().setAttributes(layoutParams);
         });
     }
 
