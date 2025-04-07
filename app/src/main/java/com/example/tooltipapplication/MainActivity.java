@@ -3,6 +3,7 @@ package com.example.tooltipapplication;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -37,7 +38,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         TextView showTooltipButton = findViewById(R.id.textview);
-        showTooltipButton.setOnClickListener(v-> showTooltip(showTooltipButton, this));
+//        showTooltipButton.setOnClickListener(v-> showTooltip(showTooltipButton, this));
+        showTooltipButton.setOnClickListener(v-> {
+            Intent intent = new Intent(MainActivity.this, ComposeActivity.class);
+            startActivity(intent);
+        });
     }
 
 
