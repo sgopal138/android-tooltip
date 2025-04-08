@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         TextView showTooltipButton = findViewById(R.id.textview);
 //        showTooltipButton.setOnClickListener(v-> showTooltip(showTooltipButton, this));
         showTooltipButton.setOnClickListener(v-> {
-            Intent intent = new Intent(MainActivity.this, ComposeActivity.class);
+            Intent intent = new Intent(MainActivity.this, WelcomeScanActivity.class);
             startActivity(intent);
         });
     }
