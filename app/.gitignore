@@ -1,0 +1,86 @@
+# Built application files
+*.apk
+*.ap_
+*.aab
+
+# Files for the ART/Dalvik VM
+*.dex
+
+# Java class files
+*.class
+
+# Generated files
+bin/
+gen/
+out/
+build/
+captures/
+.gradle/
+local.properties
+
+# IntelliJ/Android Studio project files
+.idea/
+*.iml
+*.iws
+
+# Keystore files (don't commit your signing keys!)
+*.jks
+*.keystore
+
+# Log/temporary files
+*.log
+*.tmp
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Kotlin specific
+*.kotlin_module
+
+# Android Compose compiler logs
+compose-compiler/
+
+# NDK
+.externalNativeBuild
+
+# CMake
+.cxx/
+
+# Firebase/Crashlytics
+fabric.properties
+crashlytics.properties
+*.firebase/
+
+# Virtual device and emulator data
+*.hprof
+*.lock
+*.nvram
+*.vbox
+*.vdi
+*.img
+*.qcow2
+*.vmsd
+*.vmdk
+*.vmx
+*.vswp
+
+# Packaging files
+*.zip
+*.tar.gz
+*.jar
+
+# Gradle cache
+.gradle/
+**/build/
+!gradle-wrapper.jar
+
+# Jetpack Compose Preview Cache
+.idea/gradle.xml
+.idea/modules.xml
+
+# Sign-in key (be careful!)
+signing.properties
+
+# Misc
+.navigation/
