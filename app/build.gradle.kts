@@ -73,6 +73,8 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.accompanist.placeholder)
+
 
 
     testImplementation(libs.junit)
@@ -84,5 +86,6 @@ dependencies {
     debugImplementation(libs.ui.test.manifest)
 
 
+    implementation(libs.shimmer)
 
 }
