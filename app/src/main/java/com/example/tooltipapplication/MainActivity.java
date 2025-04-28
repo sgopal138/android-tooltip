@@ -11,7 +11,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -40,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         TextView showTooltipButton = findViewById(R.id.textview);
 //        showTooltipButton.setOnClickListener(v-> showTooltip(showTooltipButton, this));
         showTooltipButton.setOnClickListener(v-> {
-            Intent intent = new Intent(MainActivity.this, DialogActivity.class);
+            Intent intent = new Intent(MainActivity.this, ComposeActivity.class);
             startActivity(intent);
         });
     }

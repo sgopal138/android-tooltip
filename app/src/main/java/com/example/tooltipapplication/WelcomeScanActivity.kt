@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -38,15 +39,15 @@ class WelcomeScanActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            /*TooltipScreen(
+            TooltipScreen(
                 mediaUrl = "https://fastly.picsum.photos/id/1/5000/3333.jpg?hmac=Asv2DU3rA_5D1xSe22xZK47WEAN0wjWeFOhzd13ujW4"
-            )*/
+            )
 
 
-            TooltipBottomSheet(
+            /*TooltipBottomSheet(
                 mediaUrl = "https://fastly.picsum.photos/id/1/5000/3333.jpg?hmac=Asv2DU3rA_5D1xSe22xZK47WEAN0wjWeFOhzd13ujW4",
 
-            )
+            )*/
 
         }
     }
@@ -184,14 +185,202 @@ fun BulletText(text: String) {
     }
 }*/
 
-
-
 @Composable
+fun TooltipScreen(mediaUrl: String?) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            bottomBar = {
+                Button(
+                    onClick = { /* Handle click */ },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 16.dp)
+                        .height(52.dp),
+                    shape = RoundedCornerShape(28.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2451C4))
+                ) {
+                    Text("Continue", color = Color.White, fontWeight = FontWeight.Bold)
+                }
+            },
+            containerColor = Color.White
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(bottom = innerPadding.calculateBottomPadding())
+            ) {
+                // Header media
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .background(Color.LightGray)
+                ) {
+                    if (!mediaUrl.isNullOrBlank()) {
+                        MediaContent(mediaUrl = mediaUrl, modifier = Modifier.fillMaxSize())
+                    }
+                }
+
+                Column(modifier = Modifier.padding(16.dp)) {
+                    SectionTitle("Scan a barcode on a product or QR in the price tag to:")
+                    BulletText("See its price")
+                    BulletText("Check availability")
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    SectionTitle("Collect your self-serve items")
+                    BulletText("Go to item location")
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        LabelledChip(title = "Article number", value = "301.586.59")
+                        LabelledChip(title = "Rack", value = "18")
+                        LabelledChip(title = "Section", value = "00")
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    BulletText("Scan your item before putting in the bag/trolley")
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_cart),
+                        contentDescription = "Cart",
+                        modifier = Modifier.size(48.dp),
+                        tint = Color.Unspecified
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+                    SectionTitle("Generate your QR and proceed to check out.")
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_cart),
+                        contentDescription = "QR Code",
+                        modifier = Modifier.size(48.dp),
+                        tint = Color.Unspecified
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "And, make sure all self-serve items has collected into your trolley/bag.",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp,
+                        color = Color.Black
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_cart),
+                        contentDescription = "IKEA Promo",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(4.dp))
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+
+
+
+
+                    SectionTitle("Scan a barcode on a product or QR in the price tag to:")
+                    BulletText("See its price")
+                    BulletText("Check availability")
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    SectionTitle("Collect your self-serve items")
+                    BulletText("Go to item location")
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        LabelledChip(title = "Article number", value = "301.586.59")
+                        LabelledChip(title = "Rack", value = "18")
+                        LabelledChip(title = "Section", value = "00")
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    BulletText("Scan your item before putting in the bag/trolley")
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_cart),
+                        contentDescription = "Cart",
+                        modifier = Modifier.size(48.dp),
+                        tint = Color.Unspecified
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+                    SectionTitle("Generate your QR and proceed to check out.")
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_cart),
+                        contentDescription = "QR Code",
+                        modifier = Modifier.size(48.dp),
+                        tint = Color.Unspecified
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "And, make sure all self-serve items has collected into your trolley/bag.",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp,
+                        color = Color.Black
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_cart),
+                        contentDescription = "IKEA Promo",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(4.dp))
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            }
+        }
+
+        // 🧷 Floating Close Button - always fixed top-left
+        IconButton(
+            onClick = { /* Handle close */ },
+            modifier = Modifier
+                .padding(16.dp)
+                .size(36.dp)
+                .background(Color.White.copy(alpha = 0.9f), shape = CircleShape)
+                .border(1.dp, Color.LightGray, CircleShape)
+                .align(Alignment.TopStart)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Close",
+                tint = Color.Black,
+                modifier = Modifier.size(20.dp)
+            )
+        }
+    }
+}
+
+
+/*@Composable
 fun TooltipScreen(mediaUrl: String?) {
     Scaffold(
         bottomBar = {
             Button(
-                onClick = { /* Handle click */ },
+                onClick = { *//* Handle click *//* },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 16.dp)
@@ -223,7 +412,7 @@ fun TooltipScreen(mediaUrl: String?) {
                 }
 
                 IconButton(
-                    onClick = { /* Handle close */ },
+                    onClick = { *//* Handle close *//* },
                     modifier = Modifier
                         .padding(12.dp)
                         .background(Color.White, CircleShape)
@@ -300,7 +489,7 @@ fun TooltipScreen(mediaUrl: String?) {
             }
         }
     }
-}
+}*/
 
 @Composable
 fun SectionTitle(text: String) {

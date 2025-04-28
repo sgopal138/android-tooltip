@@ -19,6 +19,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -33,6 +34,53 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun RoundedButton(
+    text: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+    icon: Painter? = null, // Changed from ImageVector
+    contentDescription: String? = null,
+    backgroundColor: Color = MaterialTheme.colorScheme.primary,
+) {
+    Button(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(45.dp),
+        shape = RoundedCornerShape(50),
+        contentPadding = PaddingValues(start = 22.dp, end = 16.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = backgroundColor,
+            contentColor = if (enabled) Color.White else Color.Gray,
+            disabledContainerColor = backgroundColor.copy(alpha = 0.3f),
+            disabledContentColor = Color.Gray
+        ),
+    ) {
+        if (icon != null) {
+            Icon(
+                painter = icon, // Use painter here
+                contentDescription = contentDescription,
+                modifier = Modifier
+                    .padding(end = 22.dp)
+                    .size(20.dp),
+                tint = if (enabled) Color.White else Color.Gray
+            )
+        }
+        Text(
+            text = text,
+            style = TextStyle(
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                fontFamily = NotosBold
+            ),
+            color = if (enabled) Color.White else Color.Gray,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+/*fun RoundedButton(
     text: String,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
@@ -78,7 +126,7 @@ fun RoundedButton(
             overflow = TextOverflow.Ellipsis
         )
     }
-}
+}*/
 
 @Composable
 fun appTextStyle(
