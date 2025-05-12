@@ -2,4 +2,14 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+
+
+    <color name="tooltip_text_color">#000000</color>
+    <color name="tooltip_bg_color">#FFFFFF</color>
+    <color name="button_close_bg">#A9A9A9</color> <!-- darker_gray -->
+    <color name="button_action_bg">#33B5E5</color> <!-- holo_blue_light -->
+    <color name="button_text_color">#FFFFFF</color>
+
+    <color name="tooltip_highlight_bg">#FFE082</color> <!-- Light amber, for example -->
 </resources>

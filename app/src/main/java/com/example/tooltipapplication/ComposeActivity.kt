@@ -55,7 +55,7 @@ class ComposeActivity : ComponentActivity() {
             )
             StoreSelectionScreen(storeList)*/
 
-            CheckoutItem()
+            CheckoutScreen()
         }
     }
 }

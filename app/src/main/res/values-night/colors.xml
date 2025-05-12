@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="tooltip_text_color">#FFFFFF</color>
+    <color name="tooltip_bg_color">#2C2C2C</color>
+    <color name="button_close_bg">#555555</color>
+    <color name="button_action_bg">#33B5E5</color>
+    <color name="button_text_color">#FFFFFF</color>
+
+
+    <color name="tooltip_highlight_bg">#FFE082</color> <!-- Light amber, for example -->
+</resources>

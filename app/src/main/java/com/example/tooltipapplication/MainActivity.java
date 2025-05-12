@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -36,7 +37,9 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+
         TextView showTooltipButton = findViewById(R.id.textview);
+
 //        showTooltipButton.setOnClickListener(v-> showTooltip(showTooltipButton, this));
         showTooltipButton.setOnClickListener(v-> {
             Intent intent = new Intent(MainActivity.this, ComposeActivity.class);
@@ -98,10 +101,16 @@ public class MainActivity extends AppCompatActivity {
 
         PopupWindow popupWindow = new PopupWindow(
                 tooltipView,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,  // Must be full screen
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 true
         );
+
+
+        popupWindow.setOutsideTouchable(false);
+        popupWindow.setFocusable(true);
+        popupWindow.setTouchable(true);
+        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT)); // Necessary        // Allow focus to capture touch events inside
 
         // Measure the tooltip view
         tooltipView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
@@ -116,27 +125,34 @@ public class MainActivity extends AppCompatActivity {
         // Show the popup window
         popupWindow.showAtLocation(anchorView, Gravity.NO_GRAVITY, xOffset, yOffset);
 
+        // Save original background to restore later
+        Drawable originalBackground = anchorView.getBackground();
+
+        // Highlight the anchor view (ensure highlight_background exists)
+        anchorView.setBackgroundResource(R.drawable.highlight_background);
+
         // Dim the background
-        View rootView = ((Activity) context).getWindow().getDecorView().getRootView();
+//        View rootView = ((Activity) context).getWindow().getDecorView().getRootView();
         WindowManager.LayoutParams layoutParams = ((Activity) context).getWindow().getAttributes();
-        layoutParams.alpha = 0.5f; // Reduce brightness
+        layoutParams.alpha = 0.5f;
         ((Activity) context).getWindow().setAttributes(layoutParams);
 
         // Close button functionality
         Button closeButton = tooltipView.findViewById(R.id.close_button);
         closeButton.setOnClickListener(v -> {
             popupWindow.dismiss();
-            // Restore background brightness when dismissed
-            layoutParams.alpha = 1.0f;
-            ((Activity) context).getWindow().setAttributes(layoutParams);
         });
 
-        // Restore background brightness when popup is dismissed
+        // Restore everything when popup is dismissed
         popupWindow.setOnDismissListener(() -> {
             layoutParams.alpha = 1.0f;
             ((Activity) context).getWindow().setAttributes(layoutParams);
+
+            // Restore original background
+            anchorView.setBackground(originalBackground);
         });
     }
+
 
 
 
