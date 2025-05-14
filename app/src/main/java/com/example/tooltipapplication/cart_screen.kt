@@ -1,5 +1,6 @@
 package com.example.tooltipapplication
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -7,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -21,25 +23,34 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 
 @Composable
 fun CheckoutScreen() {
@@ -57,7 +68,9 @@ fun CheckoutScreen() {
 
     val dialogItems = checkoutItems.filter { it.location == "Self serve" }
 
-    Box(modifier = Modifier.fillMaxSize() .background(Color.White)) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(Color.White)) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -124,91 +137,144 @@ fun PickupDialog(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0x80000000))
-            .padding(16.dp),
+            .background(Color(0x80000000)),
         contentAlignment = Alignment.Center
     ) {
-        Column(
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = Color.White,
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White, shape = RoundedCornerShape(16.dp))
                 .padding(16.dp)
         ) {
-            Text(
-                text = "$index of $total",
-                fontSize = 14.sp,
-                color = Color.Gray,
-                modifier = Modifier.align(Alignment.End)
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-            Text("Find your items to pick up.", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-            Text(
-                "You can find the items by checking the section and rack number.",
-                fontSize = 14.sp, color = Color.Gray, modifier = Modifier.padding(vertical = 8.dp)
-            )
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = painterResource(id = item.imageRes),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clip(RoundedCornerShape(8.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                // Progress indicator
+                Text(
+                    text = "$index of $total",
+                    fontSize = 14.sp,
+                    color = Color.Gray,
+                    modifier = Modifier.align(Alignment.End)
                 )
-                Spacer(modifier = Modifier.width(12.dp))
-                Column {
-                    Text(item.name, fontWeight = FontWeight.Bold)
-                    Text(item.description)
-                    Text("Article number", fontSize = 12.sp, color = Color.Gray)
-                    Text(item.id, fontWeight = FontWeight.Bold, fontSize = 14.sp)
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-                    Row {
-                        Column(
-                            modifier = Modifier
-                                .background(Color(0xFFF0F0F0), RoundedCornerShape(6.dp))
-                                .padding(horizontal = 12.dp, vertical = 6.dp)
-                        ) {
-                            Text("Section", fontSize = 10.sp, color = Color.Gray)
-                            Text("16", fontWeight = FontWeight.Bold)
-                        }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Column(
-                            modifier = Modifier
-                                .background(Color(0xFFF0F0F0), RoundedCornerShape(6.dp))
-                                .padding(horizontal = 12.dp, vertical = 6.dp)
-                        ) {
-                            Text("Rack", fontSize = 10.sp, color = Color.Gray)
-                            Text("51", fontWeight = FontWeight.Bold)
+                Text("Find your items to pick up.", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+
+                Text(
+                    "You can find the items by checking the section and rack number.",
+                    fontSize = 14.sp,
+                    color = Color.Gray,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Item row
+                Row {
+                    Image(
+                        painter = painterResource(id = item.imageRes),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(90.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                    )
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(item.name, fontWeight = FontWeight.Bold)
+                        Text(item.description, fontSize = 14.sp, color = Color.Gray)
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text("Article number", fontSize = 12.sp, color = Color.Gray)
+                        Text(item.id, fontWeight = FontWeight.Bold)
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Row {
+                            Box(
+                                modifier = Modifier
+                                    .border(1.dp, Color.Black, RoundedCornerShape(6.dp))
+                                    .padding(horizontal = 12.dp, vertical = 6.dp)
+                            ) {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text("Section", fontSize = 10.sp, color = Color.Gray)
+                                    Text("16", fontWeight = FontWeight.Bold)
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.width(8.dp))
+
+                            Box(
+                                modifier = Modifier
+                                    .border(1.dp, Color.Black, RoundedCornerShape(6.dp))
+                                    .padding(horizontal = 12.dp, vertical = 6.dp)
+                            ) {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text("Rack", fontSize = 10.sp, color = Color.Gray)
+                                    Text("51", fontWeight = FontWeight.Bold)
+                                }
+                            }
                         }
                     }
                 }
-            }
 
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Checkbox(checked = item.collected, onCheckedChange = {})
-                Text("Collected", fontSize = 14.sp)
-            }
+                Spacer(modifier = Modifier.height(16.dp))
 
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Button(onClick = onDismiss, modifier = Modifier.weight(1f)) {
-                    Text("Skip")
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(checked = item.collected, onCheckedChange = {})
+                    Text("Collected", fontSize = 14.sp)
                 }
-                Spacer(modifier = Modifier.width(8.dp))
-                Button(onClick = onNext, modifier = Modifier.weight(1f)) {
-                    Text(if (index == total) "Done" else "Next")
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Footer buttons
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Show skip only if not last item
+                    if (index < total) {
+                        OutlinedButton(
+                            onClick = onDismiss,
+                            shape = RoundedCornerShape(50),
+                            border = BorderStroke(1.dp, Color.Black),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black),
+                            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp)
+                        ) {
+                            Text("Skip")
+                        }
+
+                        Spacer(modifier = Modifier.width(12.dp))
+                    }
+
+                    // Next / Done button
+                    Button(
+                        onClick = onNext,
+                        shape = RoundedCornerShape(50),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
+                        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = if (index == total) "Close" else "Next",
+                            color = Color.White,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
                 }
             }
         }
     }
 }
+
+
+
 
 
 
@@ -232,12 +298,19 @@ fun CheckoutItem(
     onQuantityChange: (Int) -> Unit,
     onCollectedChange: (Boolean) -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp)) {
+    var showDialog by remember { mutableStateOf(false) }
+    var showDeleteConfirm by remember { mutableStateOf(false) }
+
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 16.dp, vertical = 12.dp)) {
         Row(modifier = Modifier.fillMaxWidth()) {
             Image(
                 painter = painterResource(id = item.imageRes),
                 contentDescription = item.name,
-                modifier = Modifier.size(80.dp).clip(RoundedCornerShape(8.dp))
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(RoundedCornerShape(8.dp))
             )
 
             Spacer(modifier = Modifier.width(12.dp))
@@ -281,7 +354,31 @@ fun CheckoutItem(
                         onDecrement = { if (item.quantity > 1) onQuantityChange(item.quantity - 1) }
                     )
 
-                    Text("⋯", fontSize = 20.sp)
+                    IconButton(onClick = { showDialog = true }) {
+                        Icon(Icons.Default.MoreHoriz, contentDescription = "More Options")
+                    }
+
+                    if (showDialog) {
+                        MoreOptionsDialog(
+                            onDismiss = { showDialog = false },
+                            onSaveAsFavourite = { /* save logic */ },
+                            onDelete = {
+                                showDialog = false
+                                showDeleteConfirm = true
+                            }
+                        )
+                    }
+
+                    if (showDeleteConfirm) {
+                        ConfirmDeleteDialog(
+                            onConfirm = {
+                                // Delete logic here
+                                showDeleteConfirm = false
+                            },
+                            onDismiss = { showDeleteConfirm = false }
+                        )
+                    }
+
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Checkbox(
@@ -309,6 +406,121 @@ fun CheckoutItem(
         }
     }
 }
+
+@Composable
+fun ConfirmDeleteDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = Color.White,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 32.dp)
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "Are you sure you want\nto remove?",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Divider()
+
+                TextButton(
+                    onClick = {
+                        onConfirm()
+                        onDismiss()
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Yes", color = Color(0xFF007AFF), fontSize = 18.sp)
+                }
+
+                Divider()
+
+                TextButton(
+                    onClick = onDismiss,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("No", color = Color(0xFF007AFF), fontSize = 18.sp)
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun MoreOptionsDialog(
+    onDismiss: () -> Unit,
+    onSaveAsFavourite: () -> Unit,
+    onDelete: () -> Unit
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = Color.White,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 32.dp)
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                // Save as favourite
+                TextButton(
+                    onClick = {
+                        onSaveAsFavourite()
+                        onDismiss()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp)
+                ) {
+                    Text("Save as favourite", color = Color(0xFF007AFF), fontSize = 18.sp)
+                }
+
+                Divider()
+
+                // Delete
+                TextButton(
+                    onClick = {
+                        onDelete()
+                        onDismiss()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp)
+                ) {
+                    Text("Delete", color = Color(0xFF007AFF), fontSize = 18.sp)
+                }
+
+                Divider()
+
+                // Cancel
+                TextButton(
+                    onClick = onDismiss,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp)
+                ) {
+                    Text("Cancel", fontWeight = FontWeight.Bold, color = Color(0xFF007AFF), fontSize = 18.sp)
+                }
+            }
+        }
+    }
+}
+
 
 
 
