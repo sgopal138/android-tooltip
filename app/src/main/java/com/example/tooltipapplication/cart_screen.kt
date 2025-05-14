@@ -29,6 +29,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -47,10 +48,12 @@ fun CheckoutScreen() {
     var showDialog = remember { mutableStateOf(false) }
     var currentDialogIndex = remember { mutableStateOf(0) }
 
-    val checkoutItems = listOf(
-        CheckoutItemData("SKOGSFRAKEN", "Pillow, high", "RM45", R.drawable.ic_cart, "Bedroom department", "123.456.78", true),
-        CheckoutItemData("POANG", "armchair", "RM309", R.drawable.ic_cart, "Self serve", "192.407.88", false)
-    )
+    val checkoutItems = remember {
+        mutableStateListOf(
+            CheckoutItemData("SKOGSFRAKEN", "Pillow, high", "RM45", R.drawable.ic_cart, "Bedroom department", "123.456.78"),
+            CheckoutItemData("POANG", "armchair", "RM309", R.drawable.ic_cart, "Self serve", "192.407.88")
+        )
+    }
 
     val dialogItems = checkoutItems.filter { it.location == "Self serve" }
 
@@ -61,7 +64,6 @@ fun CheckoutScreen() {
                 .padding(bottom = 100.dp)
         ) {
             itemsIndexed(checkoutItems) { index, item ->
-                // Insert header before the item where location is "Self serve"
                 if (item.location == "Self serve" && (index == 0 || checkoutItems[index - 1].location != "Self serve")) {
                     Text(
                         "Collect from Self serve",
@@ -74,8 +76,13 @@ fun CheckoutScreen() {
                     )
                 }
 
-                CheckoutItem(item)
+                CheckoutItem(
+                    item = item,
+                    onQuantityChange = { newQty -> checkoutItems[index] = checkoutItems[index].copy(quantity = newQty) },
+                    onCollectedChange = { newValue -> checkoutItems[index] = checkoutItems[index].copy(collected = newValue) }
+                )
             }
+
         }
 
 
@@ -213,34 +220,29 @@ data class CheckoutItemData(
     val imageRes: Int,
     val location: String,
     val id: String,
-    val collected: Boolean
+    var quantity: Int = 1,
+    var collected: Boolean = false
 )
 
 
-@Composable
-fun CheckoutItem(item: CheckoutItemData) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp)
-    ) {
-        Row(modifier = Modifier.fillMaxWidth()) {
 
-            // 🖼 Image on the left
+@Composable
+fun CheckoutItem(
+    item: CheckoutItemData,
+    onQuantityChange: (Int) -> Unit,
+    onCollectedChange: (Boolean) -> Unit
+) {
+    Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp)) {
+        Row(modifier = Modifier.fillMaxWidth()) {
             Image(
                 painter = painterResource(id = item.imageRes),
                 contentDescription = item.name,
-                modifier = Modifier
-                    .size(80.dp)
-                    .clip(RoundedCornerShape(8.dp))
+                modifier = Modifier.size(80.dp).clip(RoundedCornerShape(8.dp))
             )
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            // ➡ Column with two rows to the right of the image
             Column(modifier = Modifier.weight(1f)) {
-
-                // 🔝 Top Row: name, description, price
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(item.name, fontWeight = FontWeight.Bold)
@@ -249,8 +251,8 @@ fun CheckoutItem(item: CheckoutItemData) {
                         Spacer(modifier = Modifier.height(4.dp))
 
                         Row(verticalAlignment = Alignment.CenterVertically) {
-//                            Text("Article number", fontSize = 12.sp, color = Color.Gray)
-//                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("Article number", fontSize = 12.sp, color = Color.Gray)
+                            Spacer(modifier = Modifier.width(4.dp))
                             Box(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(4.dp))
@@ -263,29 +265,29 @@ fun CheckoutItem(item: CheckoutItemData) {
                     }
 
                     Spacer(modifier = Modifier.width(8.dp))
-
-                    Text(
-                        item.price,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        modifier = Modifier.align(Alignment.Top)
-                    )
+                    Text(item.price, fontWeight = FontWeight.Bold, fontSize = 16.sp)
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // 🔻 Bottom Row: quantity, ⋯, collected
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    QuantitySelector()
+                    QuantitySelector(
+                        quantity = item.quantity,
+                        onIncrement = { onQuantityChange(item.quantity + 1) },
+                        onDecrement = { if (item.quantity > 1) onQuantityChange(item.quantity - 1) }
+                    )
 
                     Text("⋯", fontSize = 20.sp)
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Checkbox(checked = item.collected, onCheckedChange = null)
+                        Checkbox(
+                            checked = item.collected,
+                            onCheckedChange = { onCollectedChange(it) }
+                        )
                         Text("Collected", fontSize = 14.sp)
                     }
                 }
@@ -294,7 +296,6 @@ fun CheckoutItem(item: CheckoutItemData) {
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // ℹ️ Location info
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 imageVector = Icons.Default.Info,
@@ -310,8 +311,9 @@ fun CheckoutItem(item: CheckoutItemData) {
 }
 
 
+
 @Composable
-fun QuantitySelector() {
+fun QuantitySelector(quantity: Int, onIncrement: () -> Unit, onDecrement: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -319,37 +321,37 @@ fun QuantitySelector() {
             .border(1.dp, Color.Gray, RoundedCornerShape(50))
             .clip(RoundedCornerShape(50))
     ) {
-        // Decrement button
         Box(
             modifier = Modifier
                 .width(40.dp)
-                .fillMaxHeight(),
+                .fillMaxHeight()
+                .clickable { onDecrement() },
             contentAlignment = Alignment.Center
         ) {
             Text("-", fontSize = 20.sp, fontWeight = FontWeight.Bold)
         }
 
-        // Quantity count
-        Box(
-            modifier = Modifier
-                .width(24.dp)
-                .fillMaxHeight(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text("1", fontWeight = FontWeight.Bold)
-        }
-
-        // Increment button
         Box(
             modifier = Modifier
                 .width(40.dp)
                 .fillMaxHeight(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(quantity.toString(), fontWeight = FontWeight.Bold)
+        }
+
+        Box(
+            modifier = Modifier
+                .width(40.dp)
+                .fillMaxHeight()
+                .clickable { onIncrement() },
             contentAlignment = Alignment.Center
         ) {
             Text("+", fontSize = 20.sp, fontWeight = FontWeight.Bold)
         }
     }
 }
+
 
 
 /*@Composable
