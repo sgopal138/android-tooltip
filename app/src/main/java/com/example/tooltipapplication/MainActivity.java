@@ -3,6 +3,7 @@ package com.example.tooltipapplication;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -19,10 +20,12 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        /*ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
@@ -48,9 +51,9 @@ public class MainActivity extends AppCompatActivity {
         showTooltipButton.setOnClickListener(v-> {
             Intent intent = new Intent(MainActivity.this, ComposeActivity.class);
             startActivity(intent);
-        });*/
+        });
 
-        viewPager = findViewById(R.id.view_pager);
+        /*viewPager = findViewById(R.id.view_pager);
         tabLayout = findViewById(R.id.tab_layout);
 
         adapter = new ViewPagerAdapter(this);
@@ -58,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
         new TabLayoutMediator(tabLayout, viewPager,
                 (tab, position) -> tab.setText(position == 0 ? "Compose" : "Other")
-        ).attach();
+        ).attach();*/
     }
 
 
@@ -143,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
         Drawable originalBackground = anchorView.getBackground();
 
         // Highlight the anchor view (ensure highlight_background exists)
-        anchorView.setBackgroundResource(R.drawable.highlight_background);
+//        anchorView.setBackgroundResource(R.drawable.highlight_background);
 
         // Dim the background
 //        View rootView = ((Activity) context).getWindow().getDecorView().getRootView();

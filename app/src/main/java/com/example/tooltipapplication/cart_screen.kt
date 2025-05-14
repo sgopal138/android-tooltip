@@ -3,6 +3,7 @@ package com.example.tooltipapplication
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,8 +25,8 @@ import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -53,7 +54,7 @@ fun CheckoutScreen() {
 
     val dialogItems = checkoutItems.filter { it.location == "Self serve" }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize() .background(Color.White)) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -247,31 +248,26 @@ fun CheckoutItem(item: CheckoutItemData) {
 
                 Spacer(modifier = Modifier.height(12.dp))
 
+                // Responsive Row for action buttons and "Collected"
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp)
+                        .background(color = Color.Blue)
+                        .padding(top = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     // Quantity selector on the left
                     QuantitySelector()
 
-                    // Spacer to push dots to center
-                    Spacer(modifier = Modifier.weight(1f))
+                    // Center dots
+                    Text(
+                        "⋯",
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
 
-                    // Three dots in the center
-                    Box(
-                        modifier = Modifier
-                            .size(24.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("⋯", fontSize = 20.sp)
-                    }
-
-                    // Spacer to push "Collected" to far right
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    // Collected checkbox on the right
+                    // Collected checkbox
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -279,9 +275,13 @@ fun CheckoutItem(item: CheckoutItemData) {
                             checked = item.collected,
                             onCheckedChange = null
                         )
-                        Text("Collected")
+                        Text(
+                            "Collected",
+                            fontSize = 14.sp
+                        )
                     }
                 }
+
 
 
             }
@@ -322,7 +322,7 @@ fun QuantitySelector() {
         // Quantity count
         Box(
             modifier = Modifier
-                .width(40.dp)
+                .width(24.dp)
                 .fillMaxHeight(),
             contentAlignment = Alignment.Center
         ) {
@@ -382,41 +382,94 @@ fun CheckoutFooter(modifier: Modifier = Modifier) {
 }*/
 
 @Composable
-fun CheckoutFooter(modifier: Modifier = Modifier, onGenerateQRClick: () -> Unit) {
+fun CheckoutFooter(
+    modifier: Modifier = Modifier,
+    onGenerateQRClick: () -> Unit
+) {
     Column(
         modifier = modifier
             .background(Color.White)
-            .padding(16.dp)
-            .border(1.dp, Color.LightGray)
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+//            .border(1.dp, Color.LightGray)
     ) {
+        // Black separator line
+        Divider(
+            color = Color.Black,
+            thickness = 1.dp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 12.dp)
+        )
+
+        // Subtotal section
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Bottom
         ) {
             Column {
-                Text("Subtotal", fontWeight = FontWeight.Bold)
+                Text("Subtotal", fontWeight = FontWeight.Bold, fontSize = 14.sp)
                 Text(
                     "Prices might be different during the checkout",
-                    style = MaterialTheme.typography.bodySmall
+                    fontSize = 12.sp,
+                    color = Color.Gray
                 )
             }
-            Text("RM2,460", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+            Text(
+                "RM2,460",
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp,
+                color = Color.Black
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(
-            onClick = onGenerateQRClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            shape = RoundedCornerShape(50),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0058A3))
+        // QR icon + main button row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(Icons.Default.QrCode, contentDescription = null)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("Generate QR to check out")
+            // QR Icon inside white circle with border
+            Box(
+                modifier = Modifier
+                    .size(56.dp)
+                    .clip(RoundedCornerShape(50))
+                    .background(Color.White)
+                    .border(1.dp, Color.Black, RoundedCornerShape(50))
+                    .clickable { onGenerateQRClick() },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.QrCode,
+                    contentDescription = "QR Icon",
+                    tint = Color.Black,
+                    modifier = Modifier.size(28.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            // Main checkout button
+            Button(
+                onClick = onGenerateQRClick,
+                modifier = Modifier
+                    .weight(1f)
+                    .height(56.dp),
+                shape = RoundedCornerShape(50),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0058A3))
+            ) {
+                Text(
+                    text = "Generate QR to check out",
+                    color = Color.White,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 16.sp
+                )
+            }
         }
     }
 }
+
+
+
 
