@@ -222,83 +222,93 @@ fun CheckoutItem(item: CheckoutItemData) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier = Modifier.fillMaxWidth()) {
+
+            // 🖼 Image on the left
             Image(
                 painter = painterResource(id = item.imageRes),
                 contentDescription = item.name,
-                modifier = Modifier.size(80.dp)
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(RoundedCornerShape(8.dp))
             )
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(12.dp))
 
+            // ➡ Column with two rows to the right of the image
             Column(modifier = Modifier.weight(1f)) {
-                Text(item.name, fontWeight = FontWeight.Bold)
-                Text(item.description)
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(Color.Black)
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    Text(item.id, color = Color.White, fontSize = 12.sp)
+
+                // 🔝 Top Row: name, description, price
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(item.name, fontWeight = FontWeight.Bold)
+                        Text(item.description, color = Color.Gray)
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+//                            Text("Article number", fontSize = 12.sp, color = Color.Gray)
+//                            Spacer(modifier = Modifier.width(4.dp))
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .background(Color.Black)
+                                    .padding(horizontal = 8.dp, vertical = 2.dp)
+                            ) {
+                                Text(item.id, color = Color.White, fontSize = 12.sp)
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text(
+                        item.price,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        modifier = Modifier.align(Alignment.Top)
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Responsive Row for action buttons and "Collected"
+                // 🔻 Bottom Row: quantity, ⋯, collected
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(color = Color.Blue)
-                        .padding(top = 8.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    // Quantity selector on the left
                     QuantitySelector()
 
-                    // Center dots
-                    Text(
-                        "⋯",
-                        fontSize = 20.sp,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
+                    Text("⋯", fontSize = 20.sp)
 
-                    // Collected checkbox
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Checkbox(
-                            checked = item.collected,
-                            onCheckedChange = null
-                        )
-                        Text(
-                            "Collected",
-                            fontSize = 14.sp
-                        )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Checkbox(checked = item.collected, onCheckedChange = null)
+                        Text("Collected", fontSize = 14.sp)
                     }
                 }
-
-
-
             }
-
-            Text(item.price, fontWeight = FontWeight.Bold, fontSize = 16.sp)
         }
 
         Spacer(modifier = Modifier.height(12.dp))
 
+        // ℹ️ Location info
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Default.Info, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(16.dp))
-            Spacer(modifier = Modifier.width(8.dp))
+            Icon(
+                imageVector = Icons.Default.Info,
+                contentDescription = null,
+                tint = Color.Gray,
+                modifier = Modifier.size(16.dp)
+            )
+            Spacer(modifier = Modifier.width(6.dp))
             Text("This item located at ", color = Color.Gray, fontSize = 12.sp)
             Text(item.location, fontWeight = FontWeight.Bold, fontSize = 12.sp)
         }
     }
 }
+
 
 @Composable
 fun QuantitySelector() {
