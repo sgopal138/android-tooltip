@@ -22,9 +22,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.QrCode
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
@@ -45,6 +49,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -94,9 +99,12 @@ fun CheckoutScreen() {
                     onQuantityChange = { newQty -> checkoutItems[index] = checkoutItems[index].copy(quantity = newQty) },
                     onCollectedChange = { newValue -> checkoutItems[index] = checkoutItems[index].copy(collected = newValue) }
                 )
+
+                ProductCard()
             }
 
         }
+
 
 
         // Fixed footer
@@ -694,6 +702,190 @@ fun CheckoutFooter(
     }
 }
 
+@Composable
+fun ProductCard() {
+    var expanded by remember { mutableStateOf(true) }
+    var quantity by remember { mutableStateOf(1) }
+    val image = painterResource(R.drawable.ic_cart) // Replace with your image resource
 
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
+            .padding(16.dp)
+    ) {
+        // Product summary
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Image(
+                painter = image,
+                contentDescription = "Chair",
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(Modifier.width(16.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text("POANG", fontWeight = FontWeight.Bold)
+                Text("armchair", color = Color.Gray)
+                Text("192.407.88", color = Color.White, modifier = Modifier
+                    .background(Color.Black)
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                )
+            }
+
+            Text("RM309", fontWeight = FontWeight.Bold)
+        }
+
+        Spacer(Modifier.height(16.dp))
+
+        // Quantity controls
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(1.dp, Color.Gray, RoundedCornerShape(50))
+                .padding(vertical = 8.dp)
+        ) {
+            IconButton(onClick = { if (quantity > 1) quantity-- }) {
+                Icon(Icons.Default.Remove, contentDescription = "Decrease")
+            }
+            Text("$quantity", fontWeight = FontWeight.Bold)
+            IconButton(onClick = { quantity++ }) {
+                Icon(Icons.Default.Add, contentDescription = "Increase")
+            }
+        }
+
+        Spacer(Modifier.height(8.dp))
+
+        // Expandable section
+        /*Row(
+            modifier = Modifier
+                .clickable { expanded = !expanded }
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                if (expanded) "Hide packages (2)" else "Show packages (2)",
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .background(Color(0xFFF2F2F2), RoundedCornerShape(25.dp))
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+            Icon(
+                if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                contentDescription = null
+            )
+        }*/
+
+        SectionDividerWithToggle(
+            expanded = expanded,
+            onToggle = { expanded = !expanded }
+        )
+
+        Spacer(Modifier.height(8.dp))
+
+        if (expanded) {
+            PackageItem("Armchair frame", "301.586.59", "16", "51")
+            Spacer(Modifier.height(8.dp))
+            PackageItem("Armchair cushion", "903.951.44", "16", "51")
+        }
+    }
+}
+
+@Composable
+fun PackageItem(name: String, article: String, section: String, rack: String) {
+    var collected by remember { mutableStateOf(false) }
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text("1x $name", fontWeight = FontWeight.Bold)
+        Text("POÄNG", fontSize = 12.sp)
+
+        Spacer(Modifier.height(4.dp))
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            InfoBox(text = article)
+            Spacer(Modifier.width(8.dp))
+            InfoBox(text = section)
+            Spacer(Modifier.width(8.dp))
+            InfoBox(text = rack)
+
+            Spacer(Modifier.width(16.dp))
+
+            Icon(Icons.Default.QrCode, contentDescription = "Barcode")
+            Spacer(Modifier.width(4.dp))
+            Checkbox(checked = collected, onCheckedChange = { collected = it })
+            Text("Collected", fontSize = 12.sp)
+        }
+    }
+}
+
+@Composable
+fun InfoBox(text: String) {
+    Text(
+        text,
+        color = Color.White,
+        modifier = Modifier
+            .background(Color.Black, RoundedCornerShape(4.dp))
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+        fontSize = 12.sp
+    )
+}
+
+
+@Composable
+fun SectionDividerWithToggle(
+    expanded: Boolean,
+    onToggle: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Divider(
+            modifier = Modifier.weight(1f),
+            color = Color.LightGray,
+            thickness = 1.dp
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Row(
+            modifier = Modifier
+                .clip(RoundedCornerShape(50))
+                .background(Color.White)
+                .border(1.dp, Color.LightGray, RoundedCornerShape(50))
+                .clickable { onToggle() }
+                .padding(horizontal = 12.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = if (expanded) "Hide packages (2)" else "Show packages (2)",
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Icon(
+                imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                contentDescription = null,
+                modifier = Modifier.size(16.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Divider(
+            modifier = Modifier.weight(1f),
+            color = Color.LightGray,
+            thickness = 1.dp
+        )
+    }
+}
 
 
